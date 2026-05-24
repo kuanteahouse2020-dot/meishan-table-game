@@ -39,6 +39,8 @@ body{background:#2a5a1a;font-family:'Georgia','Songti TC',serif;min-height:100vh
 .hud-timer{font-size:2rem;font-family:monospace;color:#ffe066;text-shadow:0 0 12px rgba(255,224,102,.5);line-height:1;transition:color .5s}
 .hud-timer.warn{color:#ff6b6b;animation:blink .7s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes wolfeye{0%,100%{opacity:0.15}50%{opacity:0.9}}
+@keyframes wolfpulse{0%,100%{text-shadow:0 0 8px #ff4444}50%{text-shadow:0 0 22px #ff0000,0 0 40px #aa0000}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 @keyframes flicker{0%,100%{opacity:1}50%{opacity:.4}}
 .hud-cards{font-size:.82rem;color:#c8e8a0;background:rgba(0,0,0,.4);padding:.25rem .6rem;border-radius:6px;white-space:nowrap}
@@ -75,7 +77,7 @@ body{background:#2a5a1a;font-family:'Georgia','Songti TC',serif;min-height:100vh
 .npc-hdr-sub{font-size:.84rem;color:#a06020;flex-shrink:0}
 .npc-body{flex:1;padding:1rem;display:flex;flex-direction:column;gap:.9rem;overflow-y:auto}
 .char-panel{background:#fff8ee;border:2px solid #dcc88a;border-radius:16px;padding:1rem;display:flex;align-items:flex-start;gap:.9rem}
-.char-face{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3.2rem;flex-shrink:0;border:3px solid #c8852a}
+.char-face{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3.2rem;flex-shrink:0;border:3px solid #c8852a;overflow:hidden;padding:0}
 .cf-aama{background:radial-gradient(circle,#ffe8d0,#ffb97a)}
 .cf-chief{background:radial-gradient(circle,#d0e8ff,#7ab3ff)}
 .cf-afu{background:radial-gradient(circle,#d0ffdc,#7adb9a)}
@@ -140,7 +142,7 @@ body{background:#2a5a1a;font-family:'Georgia','Songti TC',serif;min-height:100vh
 .f-hint{font-size:.92rem;color:#8b5010;text-align:center;margin-top:.35rem}
 
 /* ── ENDING ── */
-#se{background:linear-gradient(160deg,#1a3a0a,#0a2005);justify-content:flex-start;align-items:center;padding:1.5rem;text-align:center;position:relative}
+#se{background:linear-gradient(160deg,#1a3a0a,#0a2005);justify-content:flex-start;align-items:center;padding:1.5rem 1.2rem 3rem;text-align:center;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .end-wrap{max-width:430px;width:100%;position:relative;z-index:2;padding:1.2rem 0 2.5rem}
 .end-paper{background:#fff8ee;border:3px solid #c8852a;border-radius:18px;padding:1.5rem;position:relative;text-align:left;margin-top:1rem;box-shadow:0 8px 32px rgba(0,0,0,.3)}
 .end-paper::before{content:'';position:absolute;inset:8px;border:1px dashed rgba(200,133,42,.3);border-radius:13px;pointer-events:none}
@@ -285,6 +287,23 @@ body{background:#2a5a1a;font-family:'Georgia','Songti TC',serif;min-height:100vh
       <circle cx="320" cy="370" r="2.5" fill="#ffe066" opacity="0.4">
         <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2.7s" repeatCount="indefinite"/>
       </circle>
+    
+    <!-- Wolf eyes glowing in darkness -->
+    <g id="wolf-eyes-1" style="opacity:0.15">
+      <ellipse cx="58" cy="295" rx="5" ry="3" fill="#ff4400"/>
+      <ellipse cx="72" cy="295" rx="5" ry="3" fill="#ff4400"/>
+      <animate attributeName="opacity" values="0.1;0.85;0.1" dur="3.8s" repeatCount="indefinite"/>
+    </g>
+    <g id="wolf-eyes-2" style="opacity:0">
+      <ellipse cx="320" cy="310" rx="5" ry="3" fill="#ff6600"/>
+      <ellipse cx="334" cy="310" rx="5" ry="3" fill="#ff6600"/>
+      <animate attributeName="opacity" values="0;0.7;0" dur="5.2s" begin="2.5s" repeatCount="indefinite"/>
+    </g>
+    <g id="wolf-eyes-3" style="opacity:0">
+      <ellipse cx="188" cy="340" rx="4" ry="2.5" fill="#ff3300"/>
+      <ellipse cx="200" cy="340" rx="4" ry="2.5" fill="#ff3300"/>
+      <animate attributeName="opacity" values="0;0.6;0" dur="4.5s" begin="1.2s" repeatCount="indefinite"/>
+    </g>
     </svg>
 
     <!-- HUD overlay -->
@@ -295,7 +314,7 @@ body{background:#2a5a1a;font-family:'Georgia','Songti TC',serif;min-height:100vh
       <button class="hud-music" id="music-btn" onclick="toggleMusic()">🎵</button>
     </div>
     <!-- Wolf warning toast -->
-    <div id="wolf-warn" style="position:fixed;top:52px;left:0;right:0;text-align:center;color:#ff6b6b;font-size:.88rem;font-weight:bold;letter-spacing:.05rem;text-shadow:0 0 8px rgba(0,0,0,.9),0 0 2px #000;background:rgba(0,0,0,.55);opacity:0;transition:opacity .5s;pointer-events:none;padding:.35rem .6rem;z-index:9999"></div>
+    <div id="wolf-warn" style="position:fixed;top:52px;left:0;right:0;text-align:center;color:#ff8888;font-size:.92rem;font-weight:bold;letter-spacing:.06rem;text-shadow:0 0 10px #ff0000,0 0 3px #000;background:rgba(0,0,0,.7);opacity:0;transition:opacity .6s;pointer-events:none;padding:.4rem .6rem;z-index:9999;animation:wolfpulse 2s ease-in-out infinite"></div>
 
     <!-- Floating leaves -->
     <div id="leaves-wrap"></div>
@@ -595,12 +614,90 @@ const QUIZ={
 };
 
 const NPCS={
-  aama:{name:'筍乾婦人（阿嬤仔）',cls:'cf-aama',emoji:'👵',
-    greet:'喔呦～你們是從台南州來的學生？想學做菜？好啊好啊，阿嬤最喜歡教人做菜了！竹林坡的料理有一套學問，你們仔細聽哦，待會要考試，答錯了食譜卡拿不走喔！'},
-  chief:{name:'庄長（林阿旺）',cls:'cf-chief',emoji:'🧑‍💼',
-    greet:'你們要打聽寶盒的事？不急，先跟我學幾道本庄的傳統料理。我林阿旺做了三十年庄長，這些菜的典故沒有人比我清楚。學好了，通過測驗，食譜卡自然就是你的。'},
-  afu:{name:'樟腦農夫（阿福伯）',cls:'cf-afu',emoji:'🧑‍🌾',
-    greet:'……（阿福伯沉默地看著你們，慢慢點了點頭）你們想學？好。山裡的東西，要靜下心來。我教你，你認真學，測驗過了，食譜卡就是你的。'},
+  aama:{name:'筍乾婦人（阿嬤仔）',cls:'cf-aama',
+    face:`<svg viewBox="0 0 80 80" width="80" height="80">
+  <circle cx="40" cy="40" r="38" fill="#ffe4c4" stroke="#c8852a" stroke-width="3"/>
+  <!-- white hair -->
+  <ellipse cx="40" cy="14" rx="22" ry="12" fill="#f0f0f0"/>
+  <ellipse cx="20" cy="26" rx="10" ry="14" fill="#f0f0f0"/>
+  <ellipse cx="60" cy="26" rx="10" ry="14" fill="#f0f0f0"/>
+  <!-- face wrinkles -->
+  <path d="M28,38 Q25,36 26,33" stroke="#c8a080" stroke-width="1" fill="none"/>
+  <path d="M52,38 Q55,36 54,33" stroke="#c8a080" stroke-width="1" fill="none"/>
+  <!-- worried eyebrows -->
+  <path d="M26,30 Q32,26 36,30" stroke="#7a5030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M44,30 Q48,26 54,30" stroke="#7a5030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- eyes -->
+  <ellipse cx="33" cy="37" rx="5" ry="4.5" fill="white"/>
+  <ellipse cx="47" cy="37" rx="5" ry="4.5" fill="white"/>
+  <circle cx="33" cy="38" r="3" fill="#4a2800"/>
+  <circle cx="47" cy="38" r="3" fill="#4a2800"/>
+  <circle cx="34.2" cy="36.8" r="1" fill="white"/>
+  <circle cx="48.2" cy="36.8" r="1" fill="white"/>
+  <!-- worried mouth -->
+  <path d="M33,52 Q40,49 47,52" stroke="#a06040" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- cheeks -->
+  <circle cx="26" cy="46" r="5" fill="#ffb0b0" opacity="0.4"/>
+  <circle cx="54" cy="46" r="5" fill="#ffb0b0" opacity="0.4"/>
+  <!-- nose -->
+  <ellipse cx="40" cy="44" rx="3" ry="2" fill="#d4956a" opacity="0.6"/>
+</svg>`,
+    greet:'哎呦～孩子啊，你們怎麼天黑了才來！山裡不安全的……（阿嬤仔一邊擦手一邊拉著你們進門）好啦好啦，阿嬤教你們做菜，但要認真學喔！待會考試答錯，阿嬤擔心你們連回去的路都找不到……'},
+  chief:{name:'庄長（林阿旺）',cls:'cf-chief',
+    face:`<svg viewBox="0 0 80 80" width="80" height="80">
+  <circle cx="40" cy="40" r="38" fill="#ffe0c0" stroke="#6080c0" stroke-width="3"/>
+  <!-- dark hair + hat brim -->
+  <ellipse cx="40" cy="15" rx="24" ry="13" fill="#2a1800"/>
+  <rect x="14" y="22" width="52" height="6" rx="3" fill="#1a1000"/>
+  <!-- face -->
+  <!-- intense straight eyebrows -->
+  <rect x="24" y="31" width="14" height="3" rx="1.5" fill="#2a1800"/>
+  <rect x="42" y="31" width="14" height="3" rx="1.5" fill="#2a1800"/>
+  <!-- sharp eyes -->
+  <ellipse cx="33" cy="39" rx="5.5" ry="4" fill="white"/>
+  <ellipse cx="47" cy="39" rx="5.5" ry="4" fill="white"/>
+  <circle cx="33" cy="39" r="3" fill="#1a3a6a"/>
+  <circle cx="47" cy="39" r="3" fill="#1a3a6a"/>
+  <circle cx="34" cy="38" r="1" fill="white"/>
+  <circle cx="48" cy="38" r="1" fill="white"/>
+  <!-- urgent pressed lips -->
+  <path d="M32,51 L48,51" stroke="#a06040" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M34,51 Q40,54 46,51" stroke="#c07050" stroke-width="1.5" fill="none"/>
+  <!-- nose -->
+  <path d="M37,43 L35,48 L45,48 L43,43" stroke="#c09070" stroke-width="1.5" fill="none"/>
+  <!-- worry lines forehead -->
+  <path d="M28,27 Q40,24 52,27" stroke="#b08060" stroke-width="1" fill="none" opacity="0.5"/>
+</svg>`,
+    greet:'快！時間不多了！（庄長壓低聲音，眼神銳利掃向竹林）那個東西今晚比往常活躍。你們要學料理？行，我說一遍，你們給我記清楚，考不過別怪我，食譜帶不走！'},
+  afu:{name:'樟腦農夫（阿福伯）',cls:'cf-afu',
+    face:`<svg viewBox="0 0 80 80" width="80" height="80">
+  <circle cx="40" cy="40" r="38" fill="#d4a870" stroke="#4a8a2a" stroke-width="3"/>
+  <!-- straw hat -->
+  <ellipse cx="40" cy="16" rx="30" ry="8" fill="#c8a040"/>
+  <ellipse cx="40" cy="18" rx="20" ry="9" fill="#b88c30"/>
+  <!-- hat band -->
+  <rect x="20" y="22" width="40" height="4" rx="2" fill="#8a6020"/>
+  <!-- tanned weathered face -->
+  <!-- calm half-closed eyes -->
+  <ellipse cx="32" cy="39" rx="6" ry="3.5" fill="white"/>
+  <ellipse cx="48" cy="39" rx="6" ry="3.5" fill="white"/>
+  <ellipse cx="32" cy="40" rx="4" ry="2.5" fill="#2a1800"/>
+  <ellipse cx="48" cy="40" rx="4" ry="2.5" fill="#2a1800"/>
+  <!-- heavy eyelids = calm -->
+  <path d="M26,37 Q32,34 38,37" stroke="#5a3010" stroke-width="2" fill="#d4a870"/>
+  <path d="M42,37 Q48,34 54,37" stroke="#5a3010" stroke-width="2" fill="#d4a870"/>
+  <!-- relaxed eyebrows -->
+  <path d="M27,33 Q32,31 37,33" stroke="#5a3010" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M43,33 Q48,31 53,33" stroke="#5a3010" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- gentle slight smile -->
+  <path d="M33,52 Q40,56 47,52" stroke="#8a5030" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- nose -->
+  <circle cx="40" cy="45" r="3" fill="#b88050" opacity="0.5"/>
+  <!-- face lines -->
+  <path d="M24,42 Q26,48 28,52" stroke="#b08050" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M56,42 Q54,48 52,52" stroke="#b08050" stroke-width="1" fill="none" opacity="0.5"/>
+</svg>`,
+    greet:'……（阿福伯慢慢放下鋤頭，瞇眼看著你們，點了點頭）山裡的事，急不得。但今晚……（他頓了頓，往遠處瞄了一眼）確實不比平常。來，坐下，我說給你們聽。'},
 };
 
 const S={
@@ -633,7 +730,7 @@ document.getElementById('si').addEventListener('click',()=>{startMusic();if(twI<
 
 // ══ NAV ══
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');const bg=document.getElementById('si-bg');if(bg)bg.style.display=id==='si'?'block':'none';}
-function goToMap(){snd('start');show('sm');refreshMap();if(!S.started){S.started=true;startTimer();startMusic();setTimeout(()=>{showWolfMsg();wolfGrowl(0.1);startWolfAmbience();},4000);}}
+function goToMap(){snd('start');show('sm');refreshMap();if(!S.started){S.started=true;startTimer();startMusic();setTimeout(()=>{showWolfMsg();wolfGrowl(0.1);},2500);setTimeout(startWolfAmbience,5000);}}
 function backToMap(){show('sm');refreshMap();}
 function goToCards(){renderCards();show('sc');}
 function goToFinal(){resetFinal();show('sf');}
@@ -648,7 +745,9 @@ function showWolfMsg(){
   el.textContent=WOLF_MSGS[wMsgIdx%WOLF_MSGS.length];
   wMsgIdx++;
   el.style.opacity='1';
-  setTimeout(()=>{el.style.opacity='0';},3500);
+  setTimeout(()=>{el.style.opacity='0';},4000);
+  // subtle growl
+  try{wolfGrowl(0.07);}catch(e){}
 }
 
 function startWolfAmbience(){
@@ -778,11 +877,11 @@ function renderNPCBody(){
   body.innerHTML=html;body.scrollTop=0;
 }
 
-function buildDone(id){const npc=NPCS[id];return`<div class="char-panel"><div class="char-face ${npc.cls}">${npc.emoji}</div><div class="bubble">你已經學完了我所有的料理！帶著這些食譜卡去找答案吧，相信你一定能找到寶盒的。</div></div><div style="text-align:center;padding:1.5rem;color:#1a5c38;font-size:1.05rem">✅ 已完成全部 4 道料理的學習！</div><button class="btn b-outline" onclick="snd('click');backToMap()">← 返回地圖</button>`;}
+function buildDone(id){const npc=NPCS[id];return`<div class="char-panel"><div class="char-face ${npc.cls}">${npc.face}</div><div class="bubble">你已經學完了我所有的料理！帶著這些食譜卡去找答案吧，相信你一定能找到寶盒的。</div></div><div style="text-align:center;padding:1.5rem;color:#1a5c38;font-size:1.05rem">✅ 已完成全部 4 道料理的學習！</div><button class="btn b-outline" onclick="snd('click');backToMap()">← 返回地圖</button>`;}
 
 function buildDots(id,prog){return NPC_CARDS[id].map((cid,i)=>{const done=i<prog,cur=i===prog;return`<div class="rdot ${done?'completed':''} ${cur?'current':''}">${done?'✓':RC[cid].icon}</div>`;}).join('');}
 
-function buildLobby(id,prog){const npc=NPCS[id];const greeting=prog===0?`<div class="char-panel"><div class="char-face ${npc.cls}">${npc.emoji}</div><div class="bubble">${npc.greet}</div></div>`:'';const nextCard=RC[NPC_CARDS[id][prog]];return`${greeting}<div class="prog-area"><div class="prog-lbl">學習進度：${prog} / 4 道料理完成</div><div class="prog-track"><div class="prog-fill" style="width:${prog*25}%"></div></div><div class="rdots">${buildDots(id,prog)}</div></div><button class="btn b-gold" onclick="snd('click');startLearn()">🍳 開始學第 ${prog+1} 道：${nextCard.icon} ${nextCard.name}</button>`;}
+function buildLobby(id,prog){const npc=NPCS[id];const greeting=prog===0?`<div class="char-panel"><div class="char-face ${npc.cls}">${npc.face}</div><div class="bubble">${npc.greet}</div></div>`:'';const nextCard=RC[NPC_CARDS[id][prog]];return`${greeting}<div class="prog-area"><div class="prog-lbl">學習進度：${prog} / 4 道料理完成</div><div class="prog-track"><div class="prog-fill" style="width:${prog*25}%"></div></div><div class="rdots">${buildDots(id,prog)}</div></div><button class="btn b-gold" onclick="snd('click');startLearn()">🍳 開始學第 ${prog+1} 道：${nextCard.icon} ${nextCard.name}</button>`;}
 
 function buildLearn(id,prog){const c=RC[NPC_CARDS[id][prog]];return`<div class="prog-area" style="padding:.72rem 1rem"><div class="prog-lbl" style="margin-bottom:.4rem">第 ${prog+1}/4 道 · 學習食譜</div><div class="rdots">${buildDots(id,prog)}</div></div><div class="learn-card"><div class="lc-no">No. ${c.num}</div><div class="lc-header"><span class="lc-icon">${c.icon}</span><span class="lc-name">${c.name}</span></div><div class="lc-ingr">📦 主要食材：${c.ingr}</div><div class="lc-story">${c.desc}</div><div class="loc-locked">🔒 位置線索：通過測驗後解鎖</div></div><button class="btn b-red" onclick="snd('click');startQuiz()">📝 我記住了，開始測驗！</button>`;}
 
